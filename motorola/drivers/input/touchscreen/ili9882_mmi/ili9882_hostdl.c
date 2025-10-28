@@ -203,7 +203,7 @@ int ili_fw_dump_iram_data(u32 start, u32 end, bool save)
 	mm_segment_t old_fs;
 #endif
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 10, 0))
-	loff_t pos = 0;
+        loff_t pos = 0;
 #endif
 	int i, ret = 0;
 	int len, tmp = debug_en;
@@ -740,7 +740,7 @@ static int ilitek_tdd_fw_hex_open(u8 op, u8 *pfw)
 	mm_segment_t old_fs;
 #endif
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 10, 0))
-	loff_t pos = 0;
+        loff_t pos = 0;
 #endif
 
 	ILI_INFO("Open file method = %s, path = %s\n",

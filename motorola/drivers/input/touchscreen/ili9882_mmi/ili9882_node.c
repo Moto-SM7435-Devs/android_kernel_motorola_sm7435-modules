@@ -202,7 +202,7 @@ static int file_write(struct file_buffer *file, bool new_open)
 	mm_segment_t fs;
 #endif
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 10, 0))
-       loff_t pos = 0;
+        loff_t pos = 0;
 #endif
 
 	if (file->ptr == NULL) {
@@ -229,7 +229,10 @@ static int file_write(struct file_buffer *file, bool new_open)
 		ILI_ERR("Failed to open %s file\n", file->fname);
 		return -1;
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> 67a916931a (motorola: ili9882_mmi: Fix set but unused errors)
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 0))
 	fs = get_fs();
 	set_fs(KERNEL_DS);

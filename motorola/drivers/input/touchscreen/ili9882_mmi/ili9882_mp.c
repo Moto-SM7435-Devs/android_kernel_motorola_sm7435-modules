@@ -3097,7 +3097,7 @@ static int mp_show_result(bool lcm_on)
 	mm_segment_t fs;
 #endif
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 10, 0))
-	loff_t pos = 0;
+        loff_t pos = 0;
 #endif
 
 	csv = vmalloc(CSV_FILE_SIZE);
