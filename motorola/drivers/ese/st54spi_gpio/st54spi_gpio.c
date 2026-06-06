@@ -21,6 +21,7 @@
 
 #include <linux/gpio/driver.h>
 #include <linux/module.h>
+#include <linux/version.h>
 #include <linux/of_address.h>
 #include <linux/of_device.h>
 #include <linux/platform_device.h>
@@ -179,7 +180,11 @@ static int st54spi_gpio_probe(struct platform_device *pdev)
 		return rc;
 	}
 
+#if (KERNEL_VERSION(6, 4, 0) <= LINUX_VERSION_CODE)
+	st54spi_gpio_dev->class = class_create("st54spi_gpio");
+#else
 	st54spi_gpio_dev->class = class_create(THIS_MODULE, "st54spi_gpio");
+#endif
 	if (IS_ERR(st54spi_gpio_dev->class)) {
 		rc = PTR_ERR(st54spi_gpio_dev->class);
 		pr_err("%s: Error creating st54spi_gpio_dev->class: %d\n", __func__, rc);
