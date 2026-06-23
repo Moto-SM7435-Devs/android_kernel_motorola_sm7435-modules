@@ -614,21 +614,7 @@ static int fts_mmi_methods_reset(struct device *dev, int type)
 	return 0;
 }
 
-static int fts_mmi_firmware_update(struct device *dev, char *fwname)
-{
-	struct fts_ts_data *ts_data;
-	//struct input_dev *input_dev;
 
-	GET_TS_DATA(dev);
-	//input_dev = ts_data->input_dev;
-
-	ts_data->force_reflash = true;
-
-	fts_fw_update_vendor_name(fwname);
-	fts_fwupg_bin();
-
-	return 0;
-}
 
 #if FTS_USB_DETECT_EN
 static int fts_mmi_charger_mode(struct device *dev, int mode)
@@ -1126,7 +1112,7 @@ static struct ts_mmi_methods fts_mmi_methods = {
 	.palm_set_enable = fts_mmi_palm_set_enable,
 #endif
 	/* Firmware */
-	.firmware_update = fts_mmi_firmware_update,
+
 	/* vendor specific attribute group */
 	.extend_attribute_group = fts_mmi_extend_attribute_group,
 	/* PM callback */

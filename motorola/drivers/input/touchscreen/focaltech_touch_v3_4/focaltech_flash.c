@@ -1951,32 +1951,7 @@ static int fts_fwupg_get_module_info(struct fts_upgrade *upg)
     return 0;
 }
 
-int fts_fw_update_vendor_name(const char* name) {
-    struct fts_upgrade *upg = fwupgrade;
-    char* pos;
-    int len;
 
-    fts_fwupg_get_module_info(fwupgrade);
-
-    if (!upg || !upg->module_info) {
-        FTS_ERROR("upgrade struct not init");
-        return -EINVAL;
-    }
-
-    len = strlen(name);
-    if (len > FILE_NAME_LENGTH) {
-        FTS_ERROR("vendor name is too long");
-        return -EINVAL;
-    }
-    pos = strstr(name, ".bin");
-    if (pos == NULL)
-        snprintf(upg->module_info->vendor_name, FILE_NAME_LENGTH, "%s", name);
-    else {
-        len = len - strlen(".bin");
-        snprintf(upg->module_info->vendor_name, len + 1, "%s", name);
-    }
-    return 0;
-}
 
 static int fts_get_fw_file_via_request_firmware(struct fts_upgrade *upg)
 {
