@@ -333,16 +333,7 @@ struct goodix_ts_board_data {
 	bool fw_upgrade_drv;
 };
 
-enum goodix_fw_update_mode {
-	UPDATE_MODE_DEFAULT = 0,
-	UPDATE_MODE_FORCE = (1<<0), /* force update mode */
-	UPDATE_MODE_BLOCK = (1<<1), /* update in block mode */
-	UPDATE_MODE_FLASH_CFG = (1<<2), /* reflash config */
-	UPDATE_MODE_SRC_SYSFS = (1<<4), /* firmware file from sysfs */
-	UPDATE_MODE_SRC_HEAD = (1<<5), /* firmware file from head file */
-	UPDATE_MODE_SRC_REQUEST = (1<<6), /* request firmware */
-	UPDATE_MODE_SRC_ARGS = (1<<7), /* firmware data from function args */
-};
+
 
 #define MAX_CMD_DATA_LEN 10
 #define MAX_CMD_BUF_LEN  16
@@ -769,10 +760,6 @@ int is_risk_data(const u8 *data, int size);
 u32 goodix_get_file_config_id(u8 *ic_config);
 void goodix_rotate_abcd2cbad(int tx, int rx, s16 *data);
 int goodix_gesture_enable(int enable);
-
-int goodix_fw_update_init(struct goodix_ts_core *core_data);
-void goodix_fw_update_uninit(void);
-int goodix_do_fw_update(struct goodix_ic_config *ic_config, int mode);
 
 int goodix_get_ic_type(struct device_node *node);
 int gesture_module_init(void);

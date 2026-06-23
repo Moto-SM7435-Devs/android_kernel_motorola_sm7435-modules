@@ -2434,12 +2434,7 @@ static int goodix_later_init_thread(void *data)
 	struct goodix_ts_core *cd = data;
 	struct goodix_ts_hw_ops *hw_ops = cd->hw_ops;
 
-	/* setp 1: init fw struct add try do fw upgrade */
-	ret = goodix_fw_update_init(cd);
-	if (ret) {
-		ts_err("failed init fw update module");
-		goto err_out;
-	}
+	/* setp 1: init fw struct add try do fw upgrade (removed) */
 
 	/* setp 2: get config data from config bin */
 	if (goodix_get_config_proc(cd)) {
@@ -2475,7 +2470,7 @@ static int goodix_later_init_thread(void *data)
 #ifdef CONFIG_INPUT_TOUCHSCREEN_MMI
 		goto stage2_init;
 #endif
-		goto uninit_fw;
+		goto err_out;
 	}
 	ret = hw_ops->get_ic_info(cd, &cd->ic_info);
 	if (ret) {
@@ -2483,7 +2478,7 @@ static int goodix_later_init_thread(void *data)
 #ifdef CONFIG_INPUT_TOUCHSCREEN_MMI
 		goto stage2_init;
 #endif
-		goto uninit_fw;
+		goto err_out;
 	}
 
 #ifndef CONFIG_INPUT_TOUCHSCREEN_MMI
@@ -2500,14 +2495,12 @@ stage2_init:
 	ret = goodix_ts_stage2_init(cd);
 	if (ret) {
 		ts_err("stage2 init failed");
-		goto uninit_fw;
+		goto err_out;
 	}
 	cd->init_stage = CORE_INIT_STAGE2;
 
 	return 0;
 
-uninit_fw:
-	goodix_fw_update_uninit();
 err_out:
 	ts_err("stage2 init failed");
 	cd->init_stage = CORE_INIT_FAIL;
@@ -2806,7 +2799,6 @@ static int goodix_ts_remove(struct platform_device *pdev)
 			goodix_ts_esd_off(core_data);
 		goodix_ts_unregister_notifier(&ts_esd->esd_notifier);
 
-		goodix_fw_update_uninit();
 		goodix_ts_input_dev_remove(core_data);
 		goodix_ts_pen_dev_remove(core_data);
 		goodix_ts_sysfs_exit(core_data);
