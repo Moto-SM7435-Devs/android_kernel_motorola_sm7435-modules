@@ -10,6 +10,9 @@
 #include <linux/err.h>
 #include <linux/version.h>
 #include <linux/ktime.h>
+#include <linux/kernfs.h>
+#include <linux/uidgid.h>
+#include <linux/kprobes.h>
 
 #include "msm_drv.h"
 #include "sde_connector.h"
@@ -6867,6 +6870,39 @@ static DEVICE_ATTR_RO(panelDC);
 static DEVICE_ATTR_RW(panelPcdCheck);
 static DEVICE_ATTR_RO(panelDeclare);
 
+static ssize_t local_hbm_show(struct device *device,
+        struct device_attribute *attr, char *buf)
+{
+        struct drm_connector *conn = dev_get_drvdata(device);
+        int val = (int)sde_connector_get_property(conn->state, CONNECTOR_PROP_HBM);
+        return scnprintf(buf, PAGE_SIZE, "%d\n", val == HBM_FOD_ON_STATE ? 1 : 0);
+}
+
+static ssize_t local_hbm_store(struct device *device,
+        struct device_attribute *attr, const char *buf, size_t count)
+{
+        struct drm_connector *conn = dev_get_drvdata(device);
+        struct sde_connector *sde_conn = to_sde_connector(conn);
+        struct msm_param_info param_info;
+        int val;
+
+        if (kstrtoint(buf, 0, &val))
+                return -EINVAL;
+
+        param_info.param_idx = PARAM_HBM_ID;
+        param_info.param_conn_idx = CONNECTOR_PROP_HBM;
+        param_info.value = val ? HBM_FOD_ON_STATE : HBM_OFF_STATE;
+
+        dsi_display_set_param(sde_conn->display, &param_info);
+        return count;
+}
+// Workaround VERIFY_OCTAL_PERMISSIONS
+static struct device_attribute dev_attr_local_hbm = {
+        .attr = { .name = "local_hbm", .mode = 0660 },
+        .show = local_hbm_show,
+        .store = local_hbm_store,
+};
+
 static const struct attribute *sde_conn_panel_attrs[] = {
 	&dev_attr_panelId.attr,
 	&dev_attr_panelVer.attr,
@@ -6878,8 +6914,26 @@ static const struct attribute *sde_conn_panel_attrs[] = {
 	&dev_attr_panelDC.attr,
 	&dev_attr_panelPcdCheck.attr,
 	&dev_attr_panelDeclare.attr,
+	&dev_attr_local_hbm.attr,
 	NULL
 };
+
+typedef int (*kernfs_setattr_t)(struct kernfs_node *kn, const struct iattr *iattr);
+static kernfs_setattr_t p_kernfs_setattr = NULL;
+
+static void init_kernfs_setattr(void)
+{
+        struct kprobe kp = {
+                .symbol_name = "kernfs_setattr",
+        };
+
+        if (register_kprobe(&kp) == 0) {
+                p_kernfs_setattr = (kernfs_setattr_t)kp.addr;
+                unregister_kprobe(&kp);
+        } else {
+                pr_err("Failed to register kprobe for kernfs_setattr\n");
+        }
+}
 
 int moto_panel_sysfs_add(struct dsi_display *display)
 {
@@ -6890,6 +6944,38 @@ int moto_panel_sysfs_add(struct dsi_display *display)
 	}
 
 	ret = sysfs_create_files(&display->drm_conn->kdev->kobj, sde_conn_panel_attrs);
+
+        if (!p_kernfs_setattr)
+                init_kernfs_setattr();
+
+        if (p_kernfs_setattr) {
+                struct kernfs_node *kn;
+                struct iattr attrs;
+                int i;
+                const char *nodes[] = {"hbm", "acl", "cabc", "dc"};
+
+                attrs.ia_uid = make_kuid(&init_user_ns, 1000);
+                attrs.ia_gid = make_kgid(&init_user_ns, 1000);
+                attrs.ia_valid = ATTR_UID | ATTR_GID;
+
+                if (display->drm_conn->kdev->kobj.sd) {
+                        kn = sysfs_get_dirent(display->drm_conn->kdev->kobj.sd, "local_hbm");
+                        if (kn) {
+                                p_kernfs_setattr(kn, &attrs);
+                                sysfs_put(kn);
+                        }
+                }
+
+                if (display->pdev && display->pdev->dev.kobj.sd) {
+                        for (i = 0; i < ARRAY_SIZE(nodes); i++) {
+                                kn = sysfs_get_dirent(display->pdev->dev.kobj.sd, nodes[i]);
+                                if (kn) {
+                                        p_kernfs_setattr(kn, &attrs);
+                                        sysfs_put(kn);
+                                }
+                        }
+                }
+        }
 	dsi_display_ext_init(display);
 
 	DSI_INFO(" sysfs add done, ret = %d\n", ret);
