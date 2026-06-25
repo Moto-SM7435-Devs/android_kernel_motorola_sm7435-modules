@@ -28,6 +28,8 @@ KBUILD_OPTIONS += CONFIG_QCA_WIFI_ISOC=0
 KBUILD_OPTIONS += CONFIG_QCA_WIFI_2_0=1
 KBUILD_OPTIONS += $(WLAN_SELECT)
 KBUILD_OPTIONS += $(KBUILD_EXTRA) # Extra config if any
+
+KBUILD_OPTIONS += KBUILD_EXTRA_SYMBOLS="$(M)/../../platform/Module.symvers $(M)/../../../dataipa/drivers/platform/msm/Module.symvers"
 endif
 
 all:
