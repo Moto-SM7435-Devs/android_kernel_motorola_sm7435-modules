@@ -3139,7 +3139,7 @@ static void icnss_pdr_notifier_cb(int state, char *service_path, void *priv_cb)
 	if (!priv)
 		return;
 
-	icnss_pr_dbg("PD service notification: 0x%lx state: 0x%x\n",
+	icnss_pr_dbg("PD service notification: 0x%x state: 0x%lx\n",
 		     state, priv->state);
 
 	switch (state) {
