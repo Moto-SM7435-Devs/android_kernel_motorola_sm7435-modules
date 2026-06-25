@@ -253,6 +253,8 @@ wlan_add_sae_auth_log_record(struct wlan_objmgr_vdev *vdev,
 	return wlan_add_sae_log_record_to_available_slot(mlme_priv, rec);
 }
 
+#if defined(WLAN_FEATURE_ROAM_OFFLOAD) && \
+	defined(WLAN_FEATURE_CONNECTIVITY_LOGGING)
 void wlan_clear_sae_auth_logs_cache(uint8_t vdev_id)
 {
 	struct wlan_objmgr_vdev *vdev;
@@ -275,6 +277,7 @@ void wlan_clear_sae_auth_logs_cache(uint8_t vdev_id)
 	qdf_mem_zero(mlme_priv->auth_log, sizeof(mlme_priv->auth_log));
 	wlan_objmgr_vdev_release_ref(vdev, WLAN_MLME_OBJMGR_ID);
 }
+#endif
 
 static void
 wlan_cache_connectivity_log(struct wlan_objmgr_psoc *psoc, uint8_t vdev_id,
