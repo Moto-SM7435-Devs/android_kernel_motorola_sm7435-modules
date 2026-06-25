@@ -439,13 +439,18 @@ int fts_point_report_check_init(struct fts_ts_data *ts_data);
 int fts_point_report_check_exit(struct fts_ts_data *ts_data);
 void fts_prc_queue_work(struct fts_ts_data *ts_data);
 
-/* FW upgrade */
-int fts_fwupg_init(struct fts_ts_data *ts_data);
-int fts_fwupg_exit(struct fts_ts_data *ts_data);
-int fts_upgrade_bin(char *fw_name, bool force);
-void fts_fwupg_bin(void);
-int fts_enter_test_environment(bool test_state);
+/* FW upgrade stub */
+static inline int fts_upgrade_bin(char *fw_name, bool force)
+{
+    return -EPERM;
+}
 
+static inline int fts_enter_test_environment(bool test_state)
+{
+    return -EPERM;
+}
+
+/* FW upgrade */
 
 /* Other */
 int fts_reset_proc(int hdelayms);

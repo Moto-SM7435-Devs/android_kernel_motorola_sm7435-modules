@@ -2158,8 +2158,8 @@ int fts_fwupg_init(struct fts_ts_data *ts_data)
     int i = 0;
     int j = 0;
     u16 ic_stype = 0;
-    struct upgrade_func *func = upgrade_func_list[0];
-    int func_count = sizeof(upgrade_func_list) / sizeof(upgrade_func_list[0]);
+    int func_count = sizeof(upgrade_func_list) / sizeof(struct upgrade_func *);
+    struct upgrade_func *func = func_count > 0 ? upgrade_func_list[0] : NULL;
 
     FTS_INFO("fw upgrade init function");
 

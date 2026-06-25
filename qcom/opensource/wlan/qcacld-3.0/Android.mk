@@ -112,7 +112,7 @@ endif # platform-sdk-version
 include $(CLEAR_VARS)
 LOCAL_MOD_NAME := wlan
 LOCAL_MODULE              := qca_cld3_$(CHIPSET).ko
-LOCAL_MODULE_KBUILD_NAME  := qca_cld3_$(CHIPSET).ko
+LOCAL_MODULE_KBUILD_NAME  := $(LOCAL_MOD_NAME).ko
 LOCAL_MODULE_DEBUG_ENABLE := true
 LOCAL_MODULE_DDK_SUBTARGET_REGEX := "all.*"
 ifeq ($(PRODUCT_VENDOR_MOVE_ENABLED),true)

@@ -648,12 +648,16 @@ static inline int pld_pcie_force_wake_release(struct device *dev)
 
 static inline void pld_pcie_lock_pm_sem(struct device *dev)
 {
+#ifndef CONFIG_CNSS_OUT_OF_TREE
 	cnss_lock_pm_sem(dev);
+#endif
 }
 
 static inline void pld_pcie_release_pm_sem(struct device *dev)
 {
+#ifndef CONFIG_CNSS_OUT_OF_TREE
 	cnss_release_pm_sem(dev);
+#endif
 }
 
 static inline void pld_pcie_lock_reg_window(struct device *dev,

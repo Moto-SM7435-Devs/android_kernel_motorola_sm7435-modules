@@ -2434,7 +2434,7 @@ static int goodix_later_init_thread(void *data)
 	struct goodix_ts_core *cd = data;
 	struct goodix_ts_hw_ops *hw_ops = cd->hw_ops;
 
-	/* setp 1: init fw struct add try do fw upgrade (removed) */
+	/* setp 1: fw upgrade skipped (purged) */
 
 	/* setp 2: get config data from config bin */
 	if (goodix_get_config_proc(cd)) {
@@ -2445,20 +2445,7 @@ static int goodix_later_init_thread(void *data)
 	} else
 		ts_info("success get valid ic config");
 
-#ifndef CONFIG_INPUT_TOUCHSCREEN_MMI
-	ret = goodix_do_fw_update(cd->ic_configs[CONFIG_TYPE_NORMAL],
-			UPDATE_MODE_BLOCK | UPDATE_MODE_SRC_REQUEST);
-	if (ret)
-		ts_err("failed do fw update");
-#else
-	if (cd->board_data.fw_upgrade_drv) {
-		ts_info("upgrade fw by drv");
-		ret = goodix_do_fw_update(cd->ic_configs[CONFIG_TYPE_NORMAL],
-				UPDATE_MODE_BLOCK | UPDATE_MODE_SRC_REQUEST);
-		if (ret)
-			ts_err("failed do fw update");
-	}
-#endif
+
 	/* setp3: get fw version and ic_info
 	 * at this step we believe that the ic is in normal mode,
 	 * if the version info is invalid there must have some
