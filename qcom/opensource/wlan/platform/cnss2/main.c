@@ -5026,7 +5026,7 @@ static void cnss_deinitialize_mem_pool(void)
 }
 #endif
 
-void cnss_fmd_status_update_cb(void *cb_ctx, bool status)
+static void cnss_fmd_status_update_cb(void *cb_ctx, bool status)
 {
 	struct cnss_plat_data *plat_priv = (struct cnss_plat_data *)cb_ctx;
 

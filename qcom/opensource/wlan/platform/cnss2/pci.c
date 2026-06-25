@@ -5695,7 +5695,7 @@ static void cnss_pci_free_aux_mem(struct cnss_pci_data *pci_priv)
 #define CNSS_PRINT_TRACE_SPACES 4
 
 #ifdef CONFIG_ARCH_STACKWALK
-void cnss_print_thread_trace(struct task_struct *task)
+static void cnss_print_thread_trace(struct task_struct *task)
 {
 	const int spaces = CNSS_PRINT_TRACE_SPACES;
 	unsigned long entries[CNSS_PRINT_TRACE_COUNT] = {0};

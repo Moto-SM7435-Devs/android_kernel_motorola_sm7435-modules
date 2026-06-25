@@ -900,7 +900,7 @@ static int icnss_get_temperature(struct icnss_priv *priv, int *temp)
 	icnss_pr_dbg("Thermal Sensor is %s\n", tsens);
 	thermal_dev = thermal_zone_get_zone_by_name(tsens);
 	if (IS_ERR_OR_NULL(thermal_dev)) {
-		icnss_pr_err("Fail to get thermal zone. ret: %d",
+		icnss_pr_err("Fail to get thermal zone. ret: %ld",
 			     PTR_ERR(thermal_dev));
 		return PTR_ERR(thermal_dev);
 	}
@@ -1415,7 +1415,7 @@ static void icnss_host_ramdump_dev_release(struct device *dev)
 	kfree(dev);
 }
 
-int icnss_do_host_ramdump(struct icnss_priv *priv,
+static int icnss_do_host_ramdump(struct icnss_priv *priv,
 			  struct cnss_ssr_driver_dump_entry *ssr_entry,
 			  size_t num_entries_loaded)
 {
@@ -1629,7 +1629,7 @@ put_device:
 	return ret;
 }
 
-void icnss_collect_host_dump_info(struct icnss_priv *priv)
+static void icnss_collect_host_dump_info(struct icnss_priv *priv)
 {
 	struct cnss_ssr_driver_dump_entry *ssr_entry;
 	size_t num_entries_loaded = 0;
@@ -1653,7 +1653,7 @@ void icnss_collect_host_dump_info(struct icnss_priv *priv)
 		}
 
 		for (x = 0; x < num_entries_loaded; x++) {
-			icnss_pr_info("Idx:%d, ptr: %p, name: %s, size: %d\n",
+			icnss_pr_info("Idx:%d, ptr: %p, name: %s, size: %zu\n",
 				      x, ssr_entry[x].buffer_pointer,
 				      ssr_entry[x].region_name,
 				      ssr_entry[x].buffer_size);
@@ -2038,7 +2038,7 @@ static int icnss_event_soc_wake_release(struct icnss_priv *priv, void *data)
 
 	if (atomic_dec_if_positive(&priv->soc_wake_ref_count)) {
 		icnss_pr_soc_wake("Wake release not called. Ref count: %d",
-				  priv->soc_wake_ref_count);
+				  atomic_read(&priv->soc_wake_ref_count));
 		return 0;
 	}
 
@@ -3139,7 +3139,7 @@ static void icnss_pdr_notifier_cb(int state, char *service_path, void *priv_cb)
 	if (!priv)
 		return;
 
-	icnss_pr_dbg("PD service notification: 0x%lx state: 0x%lx\n",
+	icnss_pr_dbg("PD service notification: 0x%lx state: 0x%x\n",
 		     state, priv->state);
 
 	switch (state) {
@@ -4379,7 +4379,7 @@ int icnss_smmu_map(struct device *dev,
 	priv->smmu_iova_ipa_current = iova + len;
 	*iova_addr = (uint32_t)(iova + paddr - rounddown(paddr, PAGE_SIZE));
 
-	icnss_pr_dbg("IOVA addr mapped to physical addr %lx\n", *iova_addr);
+	icnss_pr_dbg("IOVA addr mapped to physical addr %x\n", *iova_addr);
 	return 0;
 }
 EXPORT_SYMBOL(icnss_smmu_map);
@@ -4943,9 +4943,9 @@ static int icnss_resource_parse(struct icnss_priv *priv)
 			ret = -ENOMEM;
 			goto put_clk;
 		}
-		icnss_pr_dbg("MSI Addr pa: %pa, iova: 0x%pK\n",
+		icnss_pr_dbg("MSI Addr pa: %pa, iova: 0x%llx\n",
 			     &priv->msi_addr_pa,
-			     priv->msi_addr_iova);
+			     (unsigned long long)priv->msi_addr_iova);
 
 		ret = of_property_read_u32_index(dev->of_node,
 						 "interrupts",
@@ -5142,7 +5142,7 @@ static void icnss_pci_smmu_fault_handler_irq(struct iommu_domain *domain,
 }
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 5, 0))
-void icnss_register_iommu_fault_handler_irq(struct icnss_priv *priv)
+static void icnss_register_iommu_fault_handler_irq(struct icnss_priv *priv)
 {
 	struct platform_device *pdev = priv->pdev;
 	struct device *dev = &pdev->dev;
@@ -5152,7 +5152,7 @@ void icnss_register_iommu_fault_handler_irq(struct icnss_priv *priv)
 				priv);
 }
 
-void icnss_unregister_iommu_fault_handler(struct icnss_priv *priv)
+static void icnss_unregister_iommu_fault_handler(struct icnss_priv *priv)
 {
 	struct platform_device *pdev = priv->pdev;
 	struct device *dev = &pdev->dev;

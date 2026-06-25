@@ -3066,7 +3066,7 @@ static void icnss_wlfw_m3_dump_upload_segs_req_ind_cb(struct qmi_handle *qmi,
 		    segment_addr < priv->msa_pa ||
 		    ind_msg->m3_segment[i].size +
 		    segment_addr > max_mapped_addr) {
-			icnss_pr_dbg("Received out of range Segment %d Addr: 0x%llx Size: 0x%x, Name: %s, type: %d\n",
+			icnss_pr_dbg("Received out of range Segment %d Addr: 0x%llx Size: 0x%llx, Name: %s, type: %d\n",
 				     (i + 1), segment_addr,
 				     ind_msg->m3_segment[i].size,
 				     ind_msg->m3_segment[i].name,
@@ -3081,7 +3081,7 @@ static void icnss_wlfw_m3_dump_upload_segs_req_ind_cb(struct qmi_handle *qmi,
 			ind_msg->m3_segment[i].name,
 			WLFW_MAX_STR_LEN + 1);
 
-		icnss_pr_dbg("Received Segment %d Addr: 0x%llx Size: 0x%x, Name: %s, type: %d\n",
+		icnss_pr_dbg("Received Segment %d Addr: 0x%llx Size: 0x%llx, Name: %s, type: %d\n",
 			     (i + 1), segment_addr,
 			     ind_msg->m3_segment[i].size,
 			     ind_msg->m3_segment[i].name,
@@ -4155,7 +4155,7 @@ out:
 }
 
 /* IMS Service */
-int ims_subscribe_for_indication_send_async(struct icnss_priv *priv)
+static int ims_subscribe_for_indication_send_async(struct icnss_priv *priv)
 {
 	int ret;
 	struct ims_private_service_subscribe_for_indications_req_msg_v01 *req;
