@@ -387,10 +387,26 @@ static ssize_t double_tap_pressed_show(struct device *dev,
 					 char *buf)
 {
 	struct ts_mmi_dev *touch_cdev = dev_get_drvdata(dev);
+	int val = touch_cdev->double_tap_pressed;
 
-	return snprintf(buf, PAGE_SIZE, "%u\n", touch_cdev->double_tap_pressed);
+	touch_cdev->double_tap_pressed = false;
+
+	return snprintf(buf, PAGE_SIZE, "%u\n", val);
 }
 static DEVICE_ATTR_RO(double_tap_pressed);
+
+static ssize_t single_tap_pressed_show(struct device *dev,
+					 struct device_attribute *attr,
+					 char *buf)
+{
+	struct ts_mmi_dev *touch_cdev = dev_get_drvdata(dev);
+	int val = touch_cdev->single_tap_pressed;
+
+	touch_cdev->single_tap_pressed = false;
+
+	return snprintf(buf, PAGE_SIZE, "%u\n", val);
+}
+static DEVICE_ATTR_RO(single_tap_pressed);
 
 static ssize_t udfps_enabled_show(struct device *dev,
 				  struct device_attribute *attr, char *buf)
@@ -504,6 +520,7 @@ static struct attribute *sysfs_class_attrs[] = {
 #ifdef CONFIG_BOARD_USES_DOUBLE_TAP_CTRL
 	&dev_attr_gesture.attr,
 	&dev_attr_single_tap_enabled.attr,
+	&dev_attr_single_tap_pressed.attr,
 	&dev_attr_double_tap_enabled.attr,
 	&dev_attr_double_tap_pressed.attr,
 #endif

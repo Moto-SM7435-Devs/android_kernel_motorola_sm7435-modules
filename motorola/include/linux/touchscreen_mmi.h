@@ -571,6 +571,7 @@ struct ts_mmi_dev {
 	struct list_head	node;
 	struct touch_clip_area clip;
 
+	bool			single_tap_pressed;
 	bool			double_tap_pressed;
 	bool			udfps_pressed;
 

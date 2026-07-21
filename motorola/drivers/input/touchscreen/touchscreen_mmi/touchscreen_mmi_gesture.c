@@ -226,6 +226,9 @@ static int _ts_mmi_gesture_handler(struct gesture_event_data *gev,
 		if (!(mode_type & TS_MMI_GESTURE_SINGLE))
 			return 1;
 
+		touch_cdev->single_tap_pressed = true;
+		sysfs_notify(&DEV_MMI->kobj, NULL, "single_tap_pressed");
+
 		key_code = BTN_TRIGGER_HAPPY3;
 		input_report_abs(sensor_pdata->input_sensor_dev, ABS_X, gev->evdata.x);
 		input_report_abs(sensor_pdata->input_sensor_dev, ABS_Y, gev->evdata.y);
@@ -250,6 +253,9 @@ static int _ts_mmi_gesture_handler(struct gesture_event_data *gev,
 	case 3:
 		if (!(mode_type & TS_MMI_GESTURE_ZERO))
 			return 1;
+
+		touch_cdev->udfps_pressed = false;
+		sysfs_notify(&DEV_MMI->kobj, NULL, "udfps_pressed");
 
 		key_code = BTN_TRIGGER_HAPPY5;
 		pr_info("%s: zero tap up\n", __func__);
