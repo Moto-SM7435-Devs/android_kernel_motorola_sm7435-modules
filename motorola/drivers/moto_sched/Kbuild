@@ -4,19 +4,15 @@ endif
 
 # add -Wall to try to catch everything we can.
 EXTRA_CFLAGS += -Wall
+EXTRA_CFLAGS += -I$(KERNEL_SRC)
 EXTRA_CFLAGS += -I$(KERNEL_SRC)/../sm7435-modules/motorola/include
-EXTRA_CFLAGS += -I$(ANDROID_BUILD_TOP)/kernel_platform/common
 ifneq ($strip($(LINUX_KERNEL_VERSION)),)
 EXTRA_CFLAGS += -I$(ANDROID_BUILD_TOP)/$(LINUX_KERNEL_VERSION)
 endif
 EXTRA_CFLAGS += -I$(KERNEL_SRC)/../sm7435-modules/motorola/drivers/moto_sched
 
-ifneq ($(filter m y,$(CONFIG_MTK_SCHED_VIP_TASK)),)
-EXTRA_CFLAGS += -I$(ANDROID_BUILD_TOP)/kernel-6.1
-EXTRA_CFLAGS += -I$(ANDROID_BUILD_TOP)/kernel_device_modules-6.1
-CONFIG_MOTO_MUTEX_INHERIT := y
-CONFIG_MOTO_RWSEM_INHERIT := y
-endif
+override CONFIG_MOTO_MUTEX_INHERIT := y
+override CONFIG_MOTO_RWSEM_INHERIT := y
 
 obj-m += moto_sched.o
 
