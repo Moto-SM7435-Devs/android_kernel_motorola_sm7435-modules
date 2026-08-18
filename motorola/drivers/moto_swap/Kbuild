@@ -10,25 +10,11 @@ endif
 EXTRA_CFLAGS += -Wall
 EXTRA_CFLAGS += -I$(KERNEL_SRC)/../sm7435-modules/motorola/include
 
-ifneq ($(filter m y,$(CONFIG_HYBRIDSWAP_ZRAM)),)
 EXTRA_CFLAGS += -DCONFIG_HYBRIDSWAP_ZRAM
-endif
-
-ifneq ($(filter m y,$(CONFIG_HYBRIDSWAP_ZRAM_WRITEBACK)),)
 EXTRA_CFLAGS += -DCONFIG_HYBRIDSWAP_ZRAM_WRITEBACK
-endif
-
-ifneq ($(filter m y,$(CONFIG_HYBRIDSWAP)),)
 EXTRA_CFLAGS += -DCONFIG_HYBRIDSWAP
-endif
-
-ifneq ($(filter m y,$(CONFIG_HYBRIDSWAP_SWAPD)),)
 EXTRA_CFLAGS += -DCONFIG_HYBRIDSWAP_SWAPD
-endif
-
-ifneq ($(filter m y,$(CONFIG_HYBRIDSWAP_CORE)),)
 EXTRA_CFLAGS += -DCONFIG_HYBRIDSWAP_CORE
-endif
 
 moto_swap-objs += $(ZRAM_SRC)/zram_drv.o
 moto_swap-objs += hybridswap/hybridswap_main.o
